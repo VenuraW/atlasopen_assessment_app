@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "../contexts/AuthContext";
+import PrivateRoute from "../components/PrivateRoute";
 
 // import firebase from "com/app";
 
@@ -29,7 +30,7 @@ function App() {
 				<Router>
 					<AuthProvider>
 						<Switch>
-							<Route path="/chat" component={Chat} />
+							<PrivateRoute path="/chat" component={Chat} />
 							<Route path="/signup" component={Signup} />
 							<Route path="/login" component={Login} />
 						</Switch>

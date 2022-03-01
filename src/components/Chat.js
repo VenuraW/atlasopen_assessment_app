@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Alert } from "react-bootstrap";
-import Logout from "./Logout";
 import "firebase/auth";
 import { useAuth } from "../contexts/AuthContext";
 
-//HINT
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	Link,
-	useParams,
-	useHistory,
-} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export default function Chat() {
 	const [error, setError] = useState("");
 	const { currentUser, logout } = useAuth();
+	const history = useHistory();
 
-	function handleLogout() {}
+	async function handleLogout() {
+		setError("");
+
+		try {
+			await logout();
+			history.push("/login");
+		} catch {
+			setError("Failed to logout");
+		}
+	}
 
 	return (
 		<>
