@@ -2,12 +2,41 @@ import React, { useState, useRef } from "react";
 import "./Signup.css";
 import { useFirebaseApp } from "reactfire";
 import { Form, Button, Card, Alert } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
+import { Link, useHistory } from "react-router-dom";
 
 const Signup = () => {
 	const nicknameRef = useRef();
 	const emailRef = useRef();
 	const passwordRef = useRef();
 	const passwordConfirmRef = useRef();
+	const { signup } = useAuth();
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+	const history = useHistory();
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+
+		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+			return setError("Passwords do not match");
+		}
+
+		try {
+			setError("");
+			setLoading(true);
+			await signup(
+				nicknameRef.current.value,
+				emailRef.current.value,
+				passwordRef.current.value
+			);
+			history.push("/chat");
+		} catch {
+			setError("Failed to create an account");
+		}
+
+		setLoading(false);
+	}
 
 	// User State
 	const [user, setUser] = useState({
@@ -27,10 +56,10 @@ const Signup = () => {
 	};
 
 	// Import firebase
-	const firebase = useFirebaseApp();
+	const firebase = 1;
 
 	// Submit function (Create account)
-	const handleSubmit = async (e) => {
+	const handlesSubmit = async (e) => {
 		e.preventDefault();
 		// Sign up code here.
 		await firebase
@@ -77,10 +106,11 @@ const Signup = () => {
 			<Card>
 				<Card.Body>
 					<h1 className="mb-4 text-center">Sign up</h1>
-					<Form>
+					{error && <Alert variant="danger">{error}</Alert>}
+					<Form onSubmit={handleSubmit}>
 						<Form.Group id="nickname">
 							<Form.Label>Nickname</Form.Label>
-							<Form.Control type="nicnkname" ref={nicknameRef} required />
+							<Form.Control type="nickname" ref={nicknameRef} required />
 						</Form.Group>
 						<Form.Group id="email">
 							<Form.Label>Email</Form.Label>
@@ -94,7 +124,7 @@ const Signup = () => {
 							<Form.Label>Password Confirmation</Form.Label>
 							<Form.Control type="password" ref={passwordConfirmRef} required />
 						</Form.Group>
-						<Button type="submit" className="w-100 mt-3">
+						<Button disabled={loading} type="submit" className="w-100 mt-3">
 							Sign Up
 						</Button>
 					</Form>
@@ -102,7 +132,7 @@ const Signup = () => {
 			</Card>
 			{user.error && <h4>{user.error}</h4>}
 			<div className="w-100 mt-2 text-center">
-				Already have an account? Log In
+				Already have an account? <Link to="/login">Log In</Link>
 			</div>
 		</>
 	);
