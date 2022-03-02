@@ -11,12 +11,13 @@ export function AuthProvider({ children }) {
 	const [currentUser, setCurrentUser] = useState();
 	const [loading, setLoading] = useState(true);
 
-	function signup(nickname, email, password) {
+	function signup(photoURL, nickname, email, password) {
 		return auth
 			.createUserWithEmailAndPassword(email, password)
 			.then((result) => {
 				result.user.updateProfile({
 					displayName: nickname,
+					photoURL: photoURL,
 				});
 			});
 	}

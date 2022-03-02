@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Signup.css";
-import { useFirebaseApp } from "reactfire";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
 import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
 	const nicknameRef = useRef();
@@ -14,9 +14,17 @@ const Signup = () => {
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const history = useHistory();
+	const [photoURL, setPhotoURL] = useState("");
+
+	useEffect(() => {
+		axios.get("http://random.dog/woof.json").then((res) => {
+			setPhotoURL(res.data.url);
+		});
+	}, []);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
+		console.log(photoURL);
 
 		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
 			return setError("Passwords do not match");
@@ -26,6 +34,7 @@ const Signup = () => {
 			setError("");
 			setLoading(true);
 			await signup(
+				photoURL,
 				nicknameRef.current.value,
 				emailRef.current.value,
 				passwordRef.current.value

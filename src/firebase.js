@@ -1,9 +1,7 @@
-﻿import { initializeApp } from "firebase/app";
-
-import "firebase/auth";
+﻿import firebase from "firebase";
 import firebaseConfig from "./firebaseConfig";
 
-const app = initializeApp({
+const app = firebase.initializeApp({
 	apiKey: firebaseConfig.apiKey,
 	authDomain: firebaseConfig.authDomain,
 	projectId: firebaseConfig.projectId,
@@ -12,5 +10,6 @@ const app = initializeApp({
 	appId: firebaseConfig.appId,
 });
 
-export const auth = app.auth();
+export const auth = firebase.auth();
+export const db = app.firestore();
 export default app;
