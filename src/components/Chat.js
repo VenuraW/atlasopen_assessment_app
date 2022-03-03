@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Card, Button, Alert } from "react-bootstrap";
 import "firebase/auth";
 import { useAuth } from "../contexts/AuthContext";
+import DateObject from "react-date-object";
 
 import { useHistory } from "react-router-dom";
 import { auth, db } from "../firebase";
-import ChatBox from "./SendMessage";
 import SendMessage from "./SendMessage";
 
 export default function Chat() {
+	const scroll = useRef();
 	const [error, setError] = useState("");
 	const { currentUser, logout } = useAuth();
 	const history = useHistory();
@@ -40,27 +41,53 @@ export default function Chat() {
 				<Card.Body className="text-center">
 					<h1>Chat Page</h1>
 					{error && <Alert variant="danger">{error}</Alert>}
-					<div className="d-flex flex-column text-center">
-						<strong>{currentUser.displayName}</strong>
-						<strong>{currentUser.email}</strong>
+					<div className="account">
+						<p style={{ marginRight: "1rem" }} className="username">
+							{auth.currentUser.displayName}
+						</p>
+						<img className="profile" src={auth.currentUser.photoURL} alt="" />
 					</div>
-					<Card>
-						<Card.Body>
-							{messages.map(({ uid, photoURL, text }) => (
-								<div>
+					<Card style={{ height: "50vh" }}>
+						<Card.Body
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "flex-start",
+								overflow: "scroll",
+							}}
+						>
+							{messages.map(
+								({ id, createdAt, displayName, uid, photoURL, text }) => (
 									<div
-										key={uid}
-										className={`message ${
-											uid == auth.currentUser ? "send" : "received"
-										}`}
+										className={
+											uid == auth.currentUser.uid ? "sent" : "received"
+										}
+										key={id}
 									>
-										<img className="profile" src={photoURL} alt="" />
-										<p className="message-text">{text}</p>
+										<p style={{ marginBottom: "0rem" }}>
+											{new DateObject(createdAt.seconds * 1000).format(
+												"ddd hh:mm a"
+											)}
+										</p>
+										<div
+											key={uid}
+											className={`message ${
+												uid == auth.currentUser.uid
+													? "sent-text"
+													: "received-text"
+											}`}
+										>
+											<img className="profile" src={photoURL} alt="" />
+											<div className="message-content">
+												<p className="username">{displayName}</p>
+												<p className="message-text">{text}</p>
+											</div>
+										</div>
 									</div>
-								</div>
-							))}
-							<SendMessage />
+								)
+							)}
 						</Card.Body>
+						<SendMessage scroll={scroll} />
 					</Card>
 				</Card.Body>
 			</Card>

@@ -1,25 +1,27 @@
 ﻿import React from "react";
 import { useRef } from "react";
 import { db, auth } from "../firebase";
-import { Card, Form, Button } from "react-bootstrap";
+import { Card, Form, button } from "react-bootstrap";
 import firebase from "firebase";
 
-export default function SendMessage() {
-	// const [message, setMessage] = useState("");
+export default function SendMessage({ scroll }) {
 	const messageRef = useRef();
 
 	async function sendMessage(e) {
 		e.preventDefault();
-		const { uid, photoURL } = auth.currentUser;
+
+		const { uid, photoURL, displayName } = auth.currentUser;
 
 		await db.collection("message").add({
 			text: messageRef.current.value,
 			uid,
 			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			photoURL,
+			displayName,
 		});
 
 		messageRef.current.value = "";
+		scroll.current.scrollIntoView({ behaviour: "smooth" });
 	}
 
 	return (
@@ -42,7 +44,7 @@ export default function SendMessage() {
 						width: "20%",
 						fontSize: "15px",
 						fontWeight: "550",
-						margin: "4px 5% -13px 5%",
+						marginLeft: "1rem",
 						maxWidth: "200px",
 					}}
 					type="submit"

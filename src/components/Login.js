@@ -26,69 +26,6 @@ const Login = () => {
 		setLoading(false);
 	}
 
-	// User State
-	const [user, setUser] = useState({
-		nickname: "",
-		email: "",
-		password: "",
-		error: "",
-	});
-
-	// onChange function
-	const handleChange = (e) => {
-		setUser({
-			...user,
-			[e.target.name]: e.target.value,
-			error: "",
-		});
-	};
-
-	// Import firebase
-	const firebase = 1;
-
-	// Submit function (Create account)
-	const handlesSubmit = async (e) => {
-		e.preventDefault();
-		// Sign up code here.
-		await firebase
-			.auth()
-			.createUserWithEmailAndPassword(user.email, user.password)
-			.then((result) => {
-				// Update the nickname
-				result.user.updateProfile({
-					displayName: user.nickname,
-				});
-
-				const myURL = { url: "http://localhost:3000/" };
-
-				// Send Email Verification and redirect to my website.
-				result.user
-					.sendEmailVerification(myURL)
-					.then(() => {
-						setUser({
-							...user,
-							verifyEmail: `Welcome ${user.nickname}. To continue please verify your email.`,
-						});
-					})
-					.catch((error) => {
-						setUser({
-							...user,
-							error: error.message,
-						});
-					});
-
-				// Sign Out the user.
-				firebase.auth().signOut();
-			})
-			.catch((error) => {
-				// Update the error
-				setUser({
-					...user,
-					error: error.message,
-				});
-			});
-	};
-
 	return (
 		<>
 			<Card>
@@ -110,7 +47,6 @@ const Login = () => {
 					</Form>
 				</Card.Body>
 			</Card>
-			{user.error && <h4>{user.error}</h4>}
 			<div className="w-100 mt-2 text-center">
 				Need an account? <Link to="/signup">Sign Up</Link>
 			</div>
