@@ -3,24 +3,12 @@ import Signup from "./Signup";
 import Login from "./Login";
 import Chat from "./Chat";
 import "./App.css";
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	Link,
-	useParams,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "../contexts/AuthContext";
 import PrivateRoute from "../components/PrivateRoute";
 
-// import firebase from "com/app";
-
-// import { useAuthState } from "react-firebase-hooks/auth";
-
-//TODO: Add stats dashboard
 function App() {
-	const [user] = [0];
 	return (
 		<Container
 			className="d-flex align-items-center justify-content-center"

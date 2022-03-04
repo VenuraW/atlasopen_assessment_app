@@ -15,12 +15,22 @@ export default function Chat() {
 	const history = useHistory();
 	const [messages, setMessages] = useState([]);
 
+	function getFormatTime(seconds) {
+		return new DateObject(seconds * 1000).format("ddd hh:mm a");
+	}
+
 	useEffect(() => {
 		db.collection("message")
 			.orderBy("createdAt", "asc")
 			.limit(50)
 			.onSnapshot((snapshot) => {
-				setMessages(snapshot.docs.map((doc) => doc.data()));
+				var messagesObjects = snapshot.docs.map((doc) => doc.data());
+				setMessages(
+					messagesObjects.map((m) => {
+						m.formatTime = getFormatTime(m.createdAt.seconds);
+						return m;
+					})
+				);
 			});
 	}, []);
 
@@ -57,24 +67,16 @@ export default function Chat() {
 							}}
 						>
 							{messages.map(
-								({ id, createdAt, displayName, uid, photoURL, text }) => (
+								({ id, formatTime, displayName, uid, photoURL, text }) => (
 									<div
-										className={
-											uid == auth.currentUser.uid ? "sent" : "received"
-										}
+										className={uid === currentUser.uid ? "sent" : "received"}
 										key={id}
 									>
-										<p style={{ marginBottom: "0rem" }}>
-											{new DateObject(createdAt.seconds * 1000).format(
-												"ddd hh:mm a"
-											)}
-										</p>
+										<p style={{ marginBottom: "0rem" }}>{formatTime}</p>
 										<div
 											key={uid}
 											className={`message ${
-												uid == auth.currentUser.uid
-													? "sent-text"
-													: "received-text"
+												uid === currentUser.uid ? "sent-text" : "received-text"
 											}`}
 										>
 											<img className="profile" src={photoURL} alt="" />
@@ -86,10 +88,11 @@ export default function Chat() {
 									</div>
 								)
 							)}
+							<div ref={scroll}></div>
 						</Card.Body>
-						<SendMessage scroll={scroll} />
 					</Card>
 				</Card.Body>
+				<SendMessage scroll={scroll} />
 			</Card>
 			<Button type="submit" onClick={handleLogout} className="w-100 mt-3">
 				Log Out

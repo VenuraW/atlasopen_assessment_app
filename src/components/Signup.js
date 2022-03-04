@@ -24,7 +24,6 @@ const Signup = () => {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		console.log(photoURL);
 
 		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
 			return setError("Passwords do not match");

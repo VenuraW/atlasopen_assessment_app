@@ -1,16 +1,18 @@
-﻿import React from "react";
+import React from "react";
 import { useRef } from "react";
-import { db, auth } from "../firebase";
-import { Card, Form, button } from "react-bootstrap";
+import { db } from "../firebase";
+import { Form } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
 import firebase from "firebase";
 
 export default function SendMessage({ scroll }) {
 	const messageRef = useRef();
+	const { currentUser } = useAuth();
 
 	async function sendMessage(e) {
 		e.preventDefault();
 
-		const { uid, photoURL, displayName } = auth.currentUser;
+		const { uid, photoURL, displayName } = currentUser;
 
 		await db.collection("message").add({
 			text: messageRef.current.value,
@@ -48,7 +50,7 @@ export default function SendMessage({ scroll }) {
 						maxWidth: "200px",
 					}}
 					type="submit"
-					class="btn btn-success"
+					className="btn btn-success"
 				>
 					Send
 				</button>
